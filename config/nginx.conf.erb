@@ -1,0 +1,27 @@
+worker_processes 1;
+daemon off;
+
+error_log <%= ENV["HEROKU_LOG_DIR"] %>/nginx/error.log;
+pid /tmp/nginx.pid;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  include       mime.types;
+  default_type  application/octet-stream;
+  access_log <%= ENV["HEROKU_LOG_DIR"] %>/nginx/access.log;
+
+  sendfile        on;
+  keepalive_timeout  65;
+
+  server {
+    listen <%= ENV["PORT"] %>;
+    root <%= ENV["HOME"] %>/public;
+
+    location / {
+      try_files $uri $uri/ =404;
+    }
+  }
+}
